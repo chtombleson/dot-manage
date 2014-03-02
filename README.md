@@ -5,6 +5,7 @@ Git based management for dot files.
 ## Structure for repo
 
 \_default: directory that holds dot files for machines that don't need special dot files.
+
 \[hostname\]: directories that are named after a host hold dot files only for that host.
 
 ## Usage
