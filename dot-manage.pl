@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use Data::Dumper;
 use File::chdir;
 use Sys::Hostname;
 use File::Slurp;
@@ -101,7 +100,10 @@ sub add {
 
     $CWD = $repoDir; {
         system("git add ./");
+        system("rm -rf " . $filePath);
     }
+
+    symlinkFiles();
 
     print "Added " . $filePath . "\n";
 }
@@ -116,6 +118,7 @@ sub remove {
 
     $CWD = $repoDir . "/" . $hostname; {
         system("git rm -rf " . $remove);
+        system("rm -rf " . $ENV{"HOME"} . "/" . $remove);
     }
     print "Removed: " . $repoDir . "/" . $hostname . "/" . $remove . "\n";
 }
@@ -156,7 +159,10 @@ sub symlinkFiles {
         my @files = read_dir($path);
 
         foreach my $file (@files) {
-            unless(-e $ENV{"HOME"} . "/" . $file) {
+            if (-e $ENV{"HOME"} . "/" . $file) {
+                system("rm -rf " . $ENV{"HOME"} . "/" . $file);
+                system("ln -s " . $path . "/" . $file . " " . $ENV{"HOME"} . "/" . $file);
+            } else {
                 system("ln -s " . $path . "/" . $file . " " . $ENV{"HOME"} . "/" . $file);
             }
         }
@@ -165,7 +171,10 @@ sub symlinkFiles {
         my @files = read_dir($path);
 
         foreach my $file (@files) {
-            unless(-e $ENV{"HOME"} . "/" . $file) {
+            if (-e $ENV{"HOME"} . "/" . $file) {
+                system("rm -rf " . $ENV{"HOME"} . "/" . $file);
+                system("ln -s " . $path . "/" . $file . " " . $ENV{"HOME"} . "/" . $file);
+            } else {
                 system("ln -s " . $path . "/" . $file . " " . $ENV{"HOME"} . "/" . $file);
             }
         }
